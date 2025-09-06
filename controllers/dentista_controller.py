@@ -1,16 +1,20 @@
 from database.mongo_connection import get_db
+from bson import ObjectId
 
 db = get_db()
 dentista_collection = db["dentistas"]
 
 def cadastrar_dentista(dados):
-    dentista_collection.insert_one(dados)
+    return dentista_collection.insert_one(dados)
 
 def listar_dentistas():
-    return list(dentista_collection.find({}, {"_id": 0}))
+    return list(dentista_collection.find())
 
-def atualizar_dentista(filtro, novos_dados):
-    dentista_collection.update_one(filtro, {"$set": novos_dados})
+def atualizar_dentista(id_dentista, novos_dados):
+    return dentista_collection.update_one(
+        {"_id": ObjectId(id_dentista)},
+        {"$set": novos_dados}
+    )
 
-def excluir_dentista(filtro):
-    dentista_collection.delete_one(filtro)
+def excluir_dentista(id_dentista):
+    return dentista_collection.delete_one({"_id": ObjectId(id_dentista)})

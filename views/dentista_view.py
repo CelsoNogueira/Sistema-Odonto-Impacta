@@ -1,18 +1,17 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from pymongo import MongoClient
 from bson import ObjectId
-
+from controllers.dentista_controller import (
+    cadastrar_dentista, listar_dentistas,
+    atualizar_dentista, excluir_dentista
+)
 
 class DentistaView(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.pack(fill="both", expand=True)
 
-        self.client = MongoClient("mongodb://localhost:27017/")
-        self.db = self.client["clinica"]
-        self.collection = self.db["dentistas"]
-
+        # Frame de formulário
         form_frame = tk.LabelFrame(
             self,
             text="Cadastro de Dentista",
@@ -24,30 +23,13 @@ class DentistaView(tk.Frame):
         form_frame.grid_columnconfigure(0, weight=1)
         form_frame.grid_columnconfigure(1, weight=3)
 
-        tk.Label(form_frame, text="Nome:", font=("Segoe UI", 10)).grid(
-            row=0, column=0, padx=5, pady=8, sticky="e"
-        )
-        self.entry_nome = ttk.Entry(form_frame, width=40, justify="center")
-        self.entry_nome.grid(row=0, column=1, padx=5, pady=8, sticky="w")
+        # Campos
+        self.entry_nome = self._criar_campo(form_frame, "Nome:", 0)
+        self.entry_telefone = self._criar_campo(form_frame, "Telefone:", 1)
+        self.entry_email = self._criar_campo(form_frame, "Email:", 2)
+        self.entry_especialidade = self._criar_campo(form_frame, "Especialidade:", 3)
 
-        tk.Label(form_frame, text="Telefone:", font=("Segoe UI", 10)).grid(
-            row=1, column=0, padx=5, pady=8, sticky="e"
-        )
-        self.entry_telefone = ttk.Entry(form_frame, width=40, justify="center")
-        self.entry_telefone.grid(row=1, column=1, padx=5, pady=8, sticky="w")
-
-        tk.Label(form_frame, text="Email:", font=("Segoe UI", 10)).grid(
-            row=2, column=0, padx=5, pady=8, sticky="e"
-        )
-        self.entry_email = ttk.Entry(form_frame, width=40, justify="center")
-        self.entry_email.grid(row=2, column=1, padx=5, pady=8, sticky="w")
-
-        tk.Label(form_frame, text="Especialidade:", font=("Segoe UI", 10)).grid(
-            row=3, column=0, padx=5, pady=8, sticky="e"
-        )
-        self.entry_especialidade = ttk.Entry(form_frame, width=40, justify="center")
-        self.entry_especialidade.grid(row=3, column=1, padx=5, pady=8, sticky="w")
-
+        # Botões
         btn_frame = tk.Frame(form_frame)
         btn_frame.grid(row=4, column=0, columnspan=2, pady=15)
         for i in range(3):
@@ -57,6 +39,7 @@ class DentistaView(tk.Frame):
         ttk.Button(btn_frame, text="Editar", command=self.editar).grid(row=0, column=1, padx=10)
         ttk.Button(btn_frame, text="Excluir", command=self.excluir).grid(row=0, column=2, padx=10)
 
+        # Tabela
         list_frame = tk.LabelFrame(
             self,
             text="Dentistas Cadastrados",
@@ -81,6 +64,14 @@ class DentistaView(tk.Frame):
 
         self.carregar_dentistas()
 
+    def _criar_campo(self, frame, label, row):
+        tk.Label(frame, text=label, font=("Segoe UI", 10)).grid(
+            row=row, column=0, padx=5, pady=8, sticky="e"
+        )
+        entry = ttk.Entry(frame, width=40, justify="center")
+        entry.grid(row=row, column=1, padx=5, pady=8, sticky="w")
+        return entry
+
     def validar_campos(self):
         return all([
             self.entry_nome.get().strip(),
@@ -98,7 +89,7 @@ class DentistaView(tk.Frame):
     def carregar_dentistas(self):
         for i in self.tree.get_children():
             self.tree.delete(i)
-        for dentista in self.collection.find():
+        for dentista in listar_dentistas():
             self.tree.insert(
                 "", "end",
                 iid=str(dentista["_id"]),
@@ -109,7 +100,7 @@ class DentistaView(tk.Frame):
         if not self.validar_campos():
             messagebox.showwarning("Atenção", "Preencha todos os campos!")
             return
-        self.collection.insert_one({
+        cadastrar_dentista({
             "nome": self.entry_nome.get(),
             "telefone": self.entry_telefone.get(),
             "email": self.entry_email.get(),
@@ -140,14 +131,14 @@ class DentistaView(tk.Frame):
         if not self.validar_campos():
             messagebox.showwarning("Atenção", "Preencha todos os campos!")
             return
-        self.collection.update_one(
-            {"_id": ObjectId(selecionado[0])},
-            {"$set": {
+        atualizar_dentista(
+            selecionado[0],
+            {
                 "nome": self.entry_nome.get(),
                 "telefone": self.entry_telefone.get(),
                 "email": self.entry_email.get(),
                 "especialidade": self.entry_especialidade.get()
-            }}
+            }
         )
         self.carregar_dentistas()
         self.limpar_campos()
@@ -158,7 +149,7 @@ class DentistaView(tk.Frame):
         if not selecionado:
             messagebox.showwarning("Atenção", "Selecione um dentista para excluir!")
             return
-        self.collection.delete_one({"_id": ObjectId(selecionado[0])})
+        excluir_dentista(selecionado[0])
         self.carregar_dentistas()
         self.limpar_campos()
         messagebox.showinfo("Sucesso", "Dentista excluído com sucesso!")
