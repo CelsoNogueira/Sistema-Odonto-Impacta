@@ -11,7 +11,7 @@ class DentistaView(tk.Frame):
         super().__init__(parent)
         self.pack(fill="both", expand=True)
 
-        # Frame de formulário
+    
         form_frame = tk.LabelFrame(
             self,
             text="Cadastro de Dentista",
@@ -23,13 +23,13 @@ class DentistaView(tk.Frame):
         form_frame.grid_columnconfigure(0, weight=1)
         form_frame.grid_columnconfigure(1, weight=3)
 
-        # Campos
+        
         self.entry_nome = self._criar_campo(form_frame, "Nome:", 0)
         self.entry_telefone = self._criar_campo(form_frame, "Telefone:", 1)
         self.entry_email = self._criar_campo(form_frame, "Email:", 2)
         self.entry_especialidade = self._criar_campo(form_frame, "Especialidade:", 3)
 
-        # Botões
+        
         btn_frame = tk.Frame(form_frame)
         btn_frame.grid(row=4, column=0, columnspan=2, pady=15)
         for i in range(3):
@@ -39,7 +39,6 @@ class DentistaView(tk.Frame):
         ttk.Button(btn_frame, text="Editar", command=self.editar).grid(row=0, column=1, padx=10)
         ttk.Button(btn_frame, text="Excluir", command=self.excluir).grid(row=0, column=2, padx=10)
 
-        # Tabela
         list_frame = tk.LabelFrame(
             self,
             text="Dentistas Cadastrados",
