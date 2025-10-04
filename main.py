@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from views.dentista_view import DentistaView
+from views.paciente_view import PacienteView
 from views.login_view import LoginView
 def centralizar_janela(root, largura, altura):
     tela_largura = root.winfo_screenwidth()
@@ -22,6 +23,9 @@ def abrir_sistema(root):
 
     aba_dentista = DentistaView(notebook)
     notebook.add(aba_dentista, text="Dentistas")
+
+    aba_paciente = PacienteView(notebook)
+    notebook.add(aba_paciente, text="Pacientes")
 
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
