@@ -24,44 +24,37 @@ class AgendamentoView(tk.Frame):
         form_frame.grid_columnconfigure(0, weight=1)
         form_frame.grid_columnconfigure(1, weight=3)
 
-        # Paciente
         tk.Label(form_frame, text="Paciente:", font=("Segoe UI", 10)).grid(row=0, column=0, sticky="e", padx=5, pady=8)
         self.combo_paciente = ttk.Combobox(form_frame, width=37, state="readonly")
         self.combo_paciente.grid(row=0, column=1, sticky="w", padx=5, pady=8)
         self.carregar_pacientes()
 
-        # Dentista
         tk.Label(form_frame, text="Dentista:", font=("Segoe UI", 10)).grid(row=1, column=0, sticky="e", padx=5, pady=8)
         self.combo_dentista = ttk.Combobox(form_frame, width=37, state="readonly")
         self.combo_dentista.grid(row=1, column=1, sticky="w", padx=5, pady=8)
         self.carregar_dentistas()
 
-        # Data
         tk.Label(form_frame, text="Data:", font=("Segoe UI", 10)).grid(row=2, column=0, sticky="e", padx=5, pady=8)
         self.entry_data = DateEntry(form_frame, width=37, date_pattern="dd/mm/yyyy")
         self.entry_data.set_date(datetime.date.today())
         self.entry_data.grid(row=2, column=1, sticky="w", padx=5, pady=8)
 
-        # Procedimento
         tk.Label(form_frame, text="Procedimento:", font=("Segoe UI", 10)).grid(row=3, column=0, sticky="e", padx=5, pady=8)
         self.combo_procedimento = ttk.Combobox(form_frame, width=37, state="readonly")
         self.combo_procedimento.grid(row=3, column=1, sticky="w", padx=5, pady=8)
         self.combo_procedimento["values"] = ["Cirurgia", "Canal", "Restauração", "Clareamento"]
         self.combo_procedimento.bind("<<ComboboxSelected>>", self.verificar_procedimento)
 
-        # Detalhes
         tk.Label(form_frame, text="Detalhes:", font=("Segoe UI", 10)).grid(row=4, column=0, sticky="e", padx=5, pady=8)
         self.entry_detalhes = ttk.Entry(form_frame, width=40)
         self.entry_detalhes.grid(row=4, column=1, sticky="w", padx=5, pady=8)
 
-        # Preço
         tk.Label(form_frame, text="Preço:", font=("Segoe UI", 10)).grid(row=5, column=0, sticky="e", padx=5, pady=8)
         self.entry_preco = ttk.Entry(form_frame, width=40)
         self.entry_preco.grid(row=5, column=1, sticky="w", padx=5, pady=8)
         self.entry_preco.insert(0, "R$ ")
         self.entry_preco.bind("<KeyRelease>", self.formatar_preco)
 
-        # Botões
         btn_frame = tk.Frame(form_frame)
         btn_frame.grid(row=6, column=0, columnspan=2, pady=15)
         for i in range(4):
@@ -72,7 +65,6 @@ class AgendamentoView(tk.Frame):
         ttk.Button(btn_frame, text="Excluir", command=self.excluir).grid(row=0, column=2, padx=10)
         ttk.Button(btn_frame, text="Atualizar", command=self.atualizar).grid(row=0, column=3, padx=10)
 
-        # Lista de agendamentos
         list_frame = tk.LabelFrame(self, text="Agendamentos", padx=10, pady=10, font=("Segoe UI", 10, "bold"))
         list_frame.pack(fill="both", expand=True, padx=20, pady=15)
 
@@ -91,9 +83,7 @@ class AgendamentoView(tk.Frame):
         self.tree.bind("<<TreeviewSelect>>", self.preencher_campos)
         self.carregar_agendamentos()
 
-    # ========================
-    # Formatação de preço
-    # ========================
+
     def formatar_preco(self, event):
         valor = self.entry_preco.get().replace("R$ ", "").replace(",", "").replace(".", "")
         if valor.isdigit():
@@ -106,9 +96,7 @@ class AgendamentoView(tk.Frame):
             self.entry_preco.insert(0, "R$ ")
             self.entry_preco.icursor(tk.END)
 
-    # ========================
-    # Carregar combos e dados
-    # ========================
+
     def carregar_pacientes(self):
         pacientes = self.db["pacientes"].find()
         self.combo_paciente["values"] = [p["nome"] for p in pacientes]
@@ -127,9 +115,6 @@ class AgendamentoView(tk.Frame):
             self.entry_detalhes.config(state="normal")
             self.entry_detalhes.delete(0, tk.END)
 
-    # ========================
-    # CRUD Agendamento
-    # ========================
     def validar_campos(self):
         return all([
             self.combo_paciente.get().strip(),
