@@ -3,7 +3,7 @@ from tkinter import ttk
 from views.dentista_view import DentistaView
 from views.paciente_view import PacienteView
 from views.login_view import LoginView
-from agendamento_view import AgendamentoView
+from views.agendamento_view import AgendamentoView
 
 def centralizar_janela(root, largura, altura):
     tela_largura = root.winfo_screenwidth()
