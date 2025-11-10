@@ -3,6 +3,8 @@ from tkinter import ttk
 from views.dentista_view import DentistaView
 from views.paciente_view import PacienteView
 from views.login_view import LoginView
+from agendamento_view import AgendamentoView
+
 def centralizar_janela(root, largura, altura):
     tela_largura = root.winfo_screenwidth()
     tela_altura = root.winfo_screenheight()
@@ -26,6 +28,10 @@ def abrir_sistema(root):
 
     aba_paciente = PacienteView(notebook)
     notebook.add(aba_paciente, text="Pacientes")
+
+    aba_agendamento = AgendamentoView(notebook)
+    notebook.add(aba_agendamento, text="Agendamentos")
+
 
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
