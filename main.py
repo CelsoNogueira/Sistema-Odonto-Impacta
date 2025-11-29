@@ -4,6 +4,7 @@ from views.dentista_view import DentistaView
 from views.paciente_view import PacienteView
 from views.login_view import LoginView
 from views.agendamento_view import AgendamentoView
+from views.fatura_view import FaturaView
 
 def centralizar_janela(root, largura, altura):
     tela_largura = root.winfo_screenwidth()
@@ -32,6 +33,8 @@ def abrir_sistema(root):
     aba_agendamento = AgendamentoView(notebook)
     notebook.add(aba_agendamento, text="Agendamentos")
 
+    aba_fatura = FaturaView(notebook)
+    notebook.add(aba_fatura, text="Faturas / Pagamentos")
 
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
